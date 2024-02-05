@@ -3,7 +3,8 @@ from .repository import user_repository, UserRepository
 from .models import User
 from typing import NoReturn
 from .utils import auth_utils
-from .schemas import Token
+from .schemas import Token, UserCreate
+from .exceptions import UsernameIsTaken, EmailIsTaken
 
 
 class UserService:
@@ -30,6 +31,20 @@ class UserService:
         user_id: UUID | None = payload.get('sub')
         user = await self.repo.get_user_by_id(user_id)
         return user
-
+    
+    async def register_new_user(self, user_data: UserCreate) -> User | NoReturn:
+        user_dict = user_data.model_dump(exclude_unset=True)
+        user_dict.update(
+            {'password': auth_utils.hash_password(user_data.password)}
+        )
+        user_exists = await self.repo.get_user_by_username(user_dict.get('username'))
+        if user_exists:
+            raise UsernameIsTaken
+        if email := user_dict.get('email'):
+            user_exists = await self.repo.get_user_by_email(email)
+            if user_exists:
+                raise EmailIsTaken
+        new_user = await self.repo.create_new_user(user_dict)
+        return new_user
 
 user_service = UserService(user_repository)

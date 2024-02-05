@@ -1,6 +1,6 @@
 from typing import Any
 from fastapi import APIRouter, Depends, Form
-from .schemas import Token, UserSchema
+from .schemas import Token, UserSchema, UserCreate
 from .service import user_service
 from fastapi.security import OAuth2PasswordBearer
 
@@ -8,6 +8,13 @@ from fastapi.security import OAuth2PasswordBearer
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/auth/login')
 
 auth_router = APIRouter(prefix='/auth', tags=['JWT Auth'])
+user_router = APIRouter(prefix='/users', tags=['Users'])
+
+
+@user_router.post('/register', response_model=UserSchema)
+async def register_new_user(user_data: UserCreate) -> Any:
+    user = await user_service.register_new_user(user_data)
+    return user
 
 
 @auth_router.post('/login', response_model=Token)

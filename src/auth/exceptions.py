@@ -30,3 +30,23 @@ class InvalidToken(HTTPException):
             detail: str = 'Invalid token error'
         ) -> None:
         super().__init__(status_code, detail)
+
+
+class UsernameIsTaken(HTTPException):
+
+    def __init__(
+            self,
+            status_code: int = status.HTTP_400_BAD_REQUEST, 
+            detail: str = 'This username is already taken'
+        ) -> None:
+        super().__init__(status_code, detail)
+
+
+class EmailIsTaken(HTTPException):
+
+    def __init__(
+            self,
+            status_code: int = status.HTTP_400_BAD_REQUEST, 
+            detail: str = 'This email is already taken'
+        ) -> None:
+        super().__init__(status_code, detail)

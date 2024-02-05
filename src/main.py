@@ -2,11 +2,12 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
-from .auth.router import auth_router as auth_router
+from .auth.router import auth_router, user_router
 
 app = FastAPI(title="Template")
 
 app.include_router(auth_router)
+app.include_router(user_router)
 
 app.add_middleware(
     CORSMiddleware,

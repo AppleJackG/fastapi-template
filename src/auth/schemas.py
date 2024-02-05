@@ -13,7 +13,7 @@ class UserSchema(BaseModel):
 
 class UserCreate(BaseModel):
     username: str
-    password: bytes
+    password: str
     email: EmailStr | None = None
 
     model_config = ConfigDict(from_attributes=True)
