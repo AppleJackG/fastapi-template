@@ -1,8 +1,9 @@
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
 from .auth.router import auth_router, user_router
+from .auth.service import user_service
 
 app = FastAPI(title="Template")
 
@@ -24,3 +25,10 @@ async def home():
     <a href="http://127.0.0.1:8000/docs">Documentation</a><br>
     <a href="http://127.0.0.1:8000/redoc">ReDoc</a>
     """
+
+
+@app.get('/protected', dependencies=[Depends(user_service.get_current_user)])
+async def protected():
+    return {
+        'f': 'F'
+    }

@@ -1,3 +1,4 @@
+import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Literal
 
@@ -26,11 +27,11 @@ class Settings(BaseSettings):
     def TEST_DATABASE_URL(self):
         return f"postgresql+asyncpg://{self.TEST_POSTGRES_USER}:{self.TEST_POSTGRES_PASSWORD}@{self.TEST_POSTGRES_HOST}:{self.TEST_POSTGRES_PORT}/{self.TEST_POSTGRES_DB}"
 
-    SECRET_KEY: str
-    PUBLIC_KEY: str
+    SECRET_KEY2: str
+    PUBLIC_KEY2: str
     ALGORITHM: str
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 10
-    REFRESH_TOKEN_EXPIRE_DAYS: int = 100
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 2
+    REFRESH_TOKEN_EXPIRE_DAYS: float = 0.00277778
 
     CORS_ORIGINS: list[str]
     CORS_HEADERS: list[str]
@@ -39,4 +40,4 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="allow")
 
 
-settings: Settings = Settings()
+settings = Settings()

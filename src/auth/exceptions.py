@@ -50,3 +50,13 @@ class EmailIsTaken(HTTPException):
             detail: str = 'This email is already taken'
         ) -> None:
         super().__init__(status_code, detail)
+
+
+class ExpiredToken(HTTPException):
+
+    def __init__(
+            self,
+            status_code: int = status.HTTP_400_BAD_REQUEST, 
+            detail: str = 'Signature has expired'
+        ) -> None:
+        super().__init__(status_code, detail)

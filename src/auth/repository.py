@@ -1,8 +1,52 @@
+from typing import Any
 from uuid import UUID
-from .models import User
+from .models import User, RefreshToken
 from sqlalchemy import select, insert
+from sqlalchemy.orm import joinedload
 from ..database import session_factory
 from pydantic import EmailStr
+from .utils import auth_utils
+from loguru import logger
+from datetime import datetime, timezone
+
+
+
+class AuthRepository:
+    
+    @staticmethod
+    async def add_refresh_token(token: str) -> None:
+        data = auth_utils.decode_token(token)
+        new_data = {
+            'refresh_key': data.get('refresh_key'),
+            'exp': datetime.fromtimestamp(data.get('exp'), timezone.utc),
+            'iat': datetime.fromtimestamp(data.get('iat'), timezone.utc),
+            'access_key': data.get('access_key'),
+            'user_id': data.get('sub')
+        }
+        logger.debug(new_data)
+        stmt = insert(RefreshToken).values(**new_data)
+        async with session_factory() as session:
+            await session.execute(stmt)
+            await session.commit()
+        return None
+
+    @staticmethod
+    async def find_refresh_token(payload: dict) -> RefreshToken | None:
+        query = (
+            select(RefreshToken)
+            .where(
+                RefreshToken.access_key == payload.get('access_key'),
+                RefreshToken.refresh_key == payload.get('refresh_key'),
+                RefreshToken.exp > datetime.now(timezone.utc)
+            )
+            .options(joinedload(RefreshToken.user))
+        )
+        async with session_factory() as session:
+            result = await session.execute(query)
+            if refresh_token := result.scalar_one_or_none():
+                refresh_token.exp = datetime.now(timezone.utc)
+            await session.commit()
+        return refresh_token
 
 
 class UserRepository:
@@ -41,4 +85,5 @@ class UserRepository:
         return created_user
 
 
+auth_repository = AuthRepository()
 user_repository = UserRepository()
