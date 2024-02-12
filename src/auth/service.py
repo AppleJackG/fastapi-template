@@ -1,12 +1,12 @@
 from uuid import UUID, uuid4
 
-from fastapi import Depends
+from fastapi import Depends, HTTPException, status
 from loguru import logger
 from .repository import AuthRepository, user_repository, UserRepository, auth_repository
 from .models import User
 from typing import NoReturn
 from .utils import auth_utils
-from .schemas import Token, UserCreate, RefreshTokenPayload
+from .schemas import Token, UserCreate, RefreshTokenPayload, UserSchema, UserUpdate
 from .exceptions import InvalidToken, UsernameIsTaken, EmailIsTaken
 
 from fastapi.security import OAuth2PasswordBearer
@@ -48,6 +48,9 @@ class AuthService:
                 token_type='Bearer'
             )
     
+    async def logout(self, user: UserSchema) -> None:
+        await auth_repository.deactivate_refresh_token(user.user_id)
+    
 
 class UserService:
     
@@ -74,6 +77,23 @@ class UserService:
                 raise EmailIsTaken
         new_user = await self.repo.create_new_user(user_dict)
         return new_user
+    
+    async def change_password(
+        self,
+        user: User,
+        old_password: str,
+        new_password: str
+    ) -> User:
+        if not auth_utils.validate_password(old_password, user.password):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail='Wrong password'
+            )
+        new_data = UserUpdate(
+            password=auth_utils.hash_password(new_password)
+        )
+        user = await self.repo.update_user(user.user_id, new_data)
+        return user
 
 
 auth_service = AuthService(auth_repository, user_repository)

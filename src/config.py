@@ -27,11 +27,11 @@ class Settings(BaseSettings):
     def TEST_DATABASE_URL(self):
         return f"postgresql+asyncpg://{self.TEST_POSTGRES_USER}:{self.TEST_POSTGRES_PASSWORD}@{self.TEST_POSTGRES_HOST}:{self.TEST_POSTGRES_PORT}/{self.TEST_POSTGRES_DB}"
 
-    SECRET_KEY2: str
-    PUBLIC_KEY2: str
+    SECRET_KEY4: str
+    PUBLIC_KEY4: str
     ALGORITHM: str
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 2
-    REFRESH_TOKEN_EXPIRE_DAYS: float = 0.00277778
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 5
+    REFRESH_TOKEN_EXPIRE_DAYS: float = 0.007
 
     CORS_ORIGINS: list[str]
     CORS_HEADERS: list[str]

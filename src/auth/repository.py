@@ -1,7 +1,9 @@
 from typing import Any
 from uuid import UUID
+
+from .schemas import UserUpdate
 from .models import User, RefreshToken
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, update
 from sqlalchemy.orm import joinedload
 from ..database import session_factory
 from pydantic import EmailStr
@@ -23,7 +25,6 @@ class AuthRepository:
             'access_key': data.get('access_key'),
             'user_id': data.get('sub')
         }
-        logger.debug(new_data)
         stmt = insert(RefreshToken).values(**new_data)
         async with session_factory() as session:
             await session.execute(stmt)
@@ -47,13 +48,29 @@ class AuthRepository:
                 refresh_token.exp = datetime.now(timezone.utc)
             await session.commit()
         return refresh_token
+    
+    @staticmethod
+    async def deactivate_refresh_token(user_id: UUID) -> None:
+        query = (
+            select(RefreshToken)
+            .where(
+                RefreshToken.user_id == user_id,
+                RefreshToken.exp > datetime.now(timezone.utc)
+            )
+        )
+        async with session_factory() as session:
+            result = await session.execute(query)
+            tokens = result.scalars()
+            for token in tokens:
+                token.exp = datetime.now(timezone.utc)
+            await session.commit()
 
 
 class UserRepository:
 
     @staticmethod
     async def get_user_by_username(username: str) -> User | None:
-        query = select(User).where(User.username==username)
+        query = select(User).where(User.username == username)
         async with session_factory() as session:
             result = await session.execute(query)
         user = result.scalar_one_or_none()
@@ -61,7 +78,7 @@ class UserRepository:
     
     @staticmethod
     async def get_user_by_id(user_id: UUID) -> User | None:
-        query = select(User).where(User.user_id==user_id)
+        query = select(User).where(User.user_id == user_id)
         async with session_factory() as session:
             result = await session.execute(query)
         user = result.scalar_one_or_none()
@@ -69,7 +86,7 @@ class UserRepository:
     
     @staticmethod
     async def get_user_by_email(email: EmailStr) -> User | None:
-        query = select(User).where(User.email==email)
+        query = select(User).where(User.email == email)
         async with session_factory() as session:
             result = await session.execute(query)
         user = result.scalar_one_or_none()
@@ -83,6 +100,21 @@ class UserRepository:
             await session.commit()
         created_user = result.scalar_one()
         return created_user
+    
+    @staticmethod
+    async def update_user(user_id: UUID, new_data: UserUpdate) -> User:
+        new_data_dict = new_data.model_dump(exclude_unset=True)
+        stmt = (
+            update(User)
+            .where(User.user_id == user_id)
+            .values(**new_data_dict)
+            .returning(User)
+        )
+        async with session_factory() as session:
+            result = await session.execute(stmt)
+            user = result.scalar_one()
+            await session.commit()
+        return user
 
 
 auth_repository = AuthRepository()

@@ -20,6 +20,14 @@ class UserCreate(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class UserUpdate(BaseModel):
+    username: str | None = None
+    password: bytes | None = None
+    email: EmailStr | None = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class AccessTokenPayload(BaseModel):
     sub: str
     username: str

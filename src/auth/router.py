@@ -1,5 +1,8 @@
 from typing import Any
 from fastapi import APIRouter, Depends, Form, Header, Response
+from fastapi.responses import JSONResponse
+
+from .models import User
 from .schemas import Token, UserSchema, UserCreate
 from .service import user_service, auth_service
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -31,6 +34,24 @@ async def refresh_token(refresh_token: str = Header()):
     return token
 
 
-@user_router.get('/users/me', response_model=UserSchema)
+@user_router.get('/me', response_model=UserSchema)
 async def get_current_user(user: UserSchema = Depends(user_service.get_current_user)) -> Any:
     return user
+
+
+@user_router.post('/change_password', response_model=UserSchema)
+async def change_password(
+    user: User = Depends(user_service.get_current_user),
+    old_password: str = Form(),
+    new_password: str = Form()
+) -> Any:
+    user = await user_service.change_password(user, old_password, new_password)
+    return user
+
+
+@auth_router.post('/logout')
+async def logout(user: UserSchema = Depends(user_service.get_current_user)) -> JSONResponse:
+    await auth_service.logout(user)
+    return {
+        'message': 'successful logout'
+    }
