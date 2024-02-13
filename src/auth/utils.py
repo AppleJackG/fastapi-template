@@ -24,7 +24,7 @@ class AuthUtilities:
     @staticmethod
     def encode_token(
         payload: dict,
-        private_key: str = settings.SECRET_KEY4,
+        private_key: str = settings.SECRET_KEY6,
         algorithm: str = settings.ALGORITHM
     ) -> str:
         encoded = jwt.encode(payload, private_key, algorithm=algorithm)
@@ -33,7 +33,7 @@ class AuthUtilities:
     @staticmethod
     def decode_token(
         token: str,
-        public_key: str = settings.PUBLIC_KEY4,
+        public_key: str = settings.PUBLIC_KEY6,
         algorithm: str = settings.ALGORITHM
     ) -> dict:
         try:
@@ -58,7 +58,7 @@ class AuthUtilities:
         )
     
     @staticmethod
-    def check_credentials(user: User, password: str) -> bool | NoReturn:
+    def check_credentials(user: User | None, password: str) -> bool | NoReturn:
         if not user:
             raise InvalidCredentials
         if not auth_utils.validate_password(password, user.password):

@@ -14,12 +14,6 @@ auth_router = APIRouter(prefix='/auth', tags=['JWT Auth'])
 user_router = APIRouter(prefix='/users', tags=['Users'])
 
 
-@user_router.post('/signup', response_model=UserSchema)
-async def signup(user_data: UserCreate) -> Any:
-    user = await user_service.register_new_user(user_data)
-    return user
-
-
 @auth_router.post('/login', response_model=Token)
 async def login(
     credentials: OAuth2PasswordRequestForm = Depends()
@@ -32,6 +26,20 @@ async def login(
 async def refresh_token(refresh_token: str = Header()):
     token = await auth_service.refresh_token(refresh_token)
     return token
+
+
+@auth_router.post('/logout')
+async def logout(user: UserSchema = Depends(user_service.get_current_user)) -> JSONResponse:
+    await auth_service.logout(user)
+    return {
+        'message': 'successful logout'
+    }
+
+
+@user_router.post('/signup', response_model=UserSchema)
+async def signup(user_data: UserCreate) -> Any:
+    user = await user_service.register_new_user(user_data)
+    return user
 
 
 @user_router.get('/me', response_model=UserSchema)
@@ -47,11 +55,3 @@ async def change_password(
 ) -> Any:
     user = await user_service.change_password(user, old_password, new_password)
     return user
-
-
-@auth_router.post('/logout')
-async def logout(user: UserSchema = Depends(user_service.get_current_user)) -> JSONResponse:
-    await auth_service.logout(user)
-    return {
-        'message': 'successful logout'
-    }

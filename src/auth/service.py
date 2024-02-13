@@ -7,7 +7,7 @@ from .models import User
 from typing import NoReturn
 from .utils import auth_utils
 from .schemas import Token, UserCreate, RefreshTokenPayload, UserSchema, UserUpdate
-from .exceptions import InvalidToken, UsernameIsTaken, EmailIsTaken
+from .exceptions import InvalidCredentials, InvalidToken, UsernameIsTaken, EmailIsTaken
 
 from fastapi.security import OAuth2PasswordBearer
 
@@ -62,6 +62,31 @@ class UserService:
         user_id: UUID | None = payload.get('sub')
         user = await self.repo.get_user_by_id(user_id)
         return user
+    
+    async def get_current_superuser(self, token: str = Depends(oauth2_scheme)) -> User | NoReturn:
+        payload = auth_utils.decode_token(token)
+        user_id: UUID | None = payload.get('sub')
+        user = await self.repo.get_user_by_id(user_id)
+        if not user.is_superuser == True:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail='Access is denied'
+            )
+        return user
+    
+    async def check_admin_rights(self, username: str, password: str) -> bool | NoReturn:
+        user = await self.repo.get_user_by_username(username)
+        if not user:
+            raise InvalidCredentials
+        if not user.is_superuser == True:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail='Access is denied'
+            )
+        if auth_utils.check_credentials(user, password):
+            return True
+        return False
+    
     
     async def register_new_user(self, user_data: UserCreate) -> User | NoReturn:
         user_dict = user_data.model_dump(exclude_unset=True)

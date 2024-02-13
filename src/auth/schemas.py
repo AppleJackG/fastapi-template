@@ -22,7 +22,7 @@ class UserCreate(BaseModel):
 
 class UserUpdate(BaseModel):
     username: str | None = None
-    password: bytes | None = None
+    password: str | None = None
     email: EmailStr | None = None
 
     model_config = ConfigDict(from_attributes=True)
