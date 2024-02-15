@@ -3,7 +3,7 @@ from uuid import UUID
 
 from .schemas import UserUpdate
 from .models import User, RefreshToken
-from sqlalchemy import select, insert, update
+from sqlalchemy import delete, select, insert, update
 from sqlalchemy.orm import joinedload
 from ..database import session_factory
 from pydantic import EmailStr
@@ -102,8 +102,7 @@ class UserRepository:
         return created_user
     
     @staticmethod
-    async def update_user(user_id: UUID, new_data: UserUpdate) -> User:
-        new_data_dict = new_data.model_dump(exclude_unset=True)
+    async def update_user(user_id: UUID, new_data_dict: dict) -> User:
         stmt = (
             update(User)
             .where(User.user_id == user_id)
@@ -115,6 +114,15 @@ class UserRepository:
             user = result.scalar_one()
             await session.commit()
         return user
+    
+
+    @staticmethod
+    async def delete_user(user_id: UUID) -> None:
+        stmt = delete(User).where(User.user_id == user_id)
+        async with session_factory() as session:
+            await session.execute(stmt)
+            await session.commit()
+        return None
 
 
 auth_repository = AuthRepository()

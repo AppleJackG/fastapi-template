@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from .auth.models import UserAdmin, RefreshTokenAdmin
 from .config import settings
-from .auth.router import auth_router, user_router
+from .auth.router import auth_router, user_router, superuser_router
 from .auth.service import user_service
 from .auth.admin import authentication_backend
 from sqladmin import Admin
@@ -15,6 +15,7 @@ admin = Admin(app, engine, authentication_backend=authentication_backend)
 
 app.include_router(auth_router)
 app.include_router(user_router)
+app.include_router(superuser_router)
 
 admin.add_view(UserAdmin)
 admin.add_view(RefreshTokenAdmin)

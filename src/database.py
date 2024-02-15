@@ -1,12 +1,22 @@
+from sqlalchemy import NullPool
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
 from .config import settings
 
 
-SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
+if settings.MODE1 == 'DEV':
+    SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL,
+    DATABASE_PARAMS = {}
+elif settings.MODE1 == 'TEST':
+    SQLALCHEMY_DATABASE_URL = settings.TEST_DATABASE_URL
+    DATABASE_PARAMS = {'poolclass': NullPool}
+else:
+    raise ValueError(f"Unknown mode: {settings.MODE1}")
 
-engine = create_async_engine(SQLALCHEMY_DATABASE_URL, echo=True)
+
+engine = create_async_engine(SQLALCHEMY_DATABASE_URL, echo=True, **DATABASE_PARAMS)
+
 
 session_factory = async_sessionmaker(autoflush=False, autocommit=False, bind=engine, expire_on_commit=False)
 

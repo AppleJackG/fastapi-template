@@ -1,14 +1,13 @@
 from uuid import UUID, uuid4
-
 from fastapi import Depends, HTTPException, status
 from loguru import logger
 from .repository import AuthRepository, user_repository, UserRepository, auth_repository
 from .models import User
 from typing import NoReturn
 from .utils import auth_utils
-from .schemas import Token, UserCreate, RefreshTokenPayload, UserSchema, UserUpdate
+from .schemas import Token, UserCreate, RefreshTokenPayload, UserPatch, UserSchema, UserUpdate
 from .exceptions import InvalidCredentials, InvalidToken, UsernameIsTaken, EmailIsTaken
-
+from ..config import settings
 from fastapi.security import OAuth2PasswordBearer
 
 
@@ -31,7 +30,8 @@ class AuthService:
             return Token(
                 access_token=access_token,
                 refresh_token=refresh_token,
-                token_type='Bearer'
+                token_type='Bearer',
+                expires_in=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60
             )
         
     async def refresh_token(self, refresh_token: str) -> Token:
@@ -117,8 +117,18 @@ class UserService:
         new_data = UserUpdate(
             password=auth_utils.hash_password(new_password)
         )
-        user = await self.repo.update_user(user.user_id, new_data)
+        new_data_dict = new_data.model_dump(exclude_unset=True)
+        user = await self.repo.update_user(user.user_id, new_data_dict)
         return user
+    
+    async def patch_user(self, user_id: UUID, new_values: UserPatch) -> User:
+        new_data_dict = new_values.model_dump(exclude_unset=True)
+        user = await self.repo.update_user(user_id, new_data_dict)
+        return user
+
+    async def delete_user(self, user_id: UUID) -> None:
+        await self.repo.delete_user(user_id)
+        return None
 
 
 auth_service = AuthService(auth_repository, user_repository)

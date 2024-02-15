@@ -1,31 +1,40 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from pydantic import BaseModel, EmailStr, ConfigDict
 from uuid import UUID
 
 
-class UserSchema(BaseModel):
-    user_id: UUID
-    username: str
-    email: EmailStr | None = None
-    is_active: bool = True
-
+class UserBase(BaseModel):
     model_config = ConfigDict(from_attributes=True, strict=True)
 
 
-class UserCreate(BaseModel):
+class UserSchema(UserBase):
+    user_id: UUID
+    username: str
+    email: EmailStr | None
+    is_active: bool
+    is_verified: bool 
+    is_superuser: bool 
+
+
+class UserCreate(UserBase):
     username: str
     password: str
     email: EmailStr | None = None
 
-    model_config = ConfigDict(from_attributes=True)
 
-
-class UserUpdate(BaseModel):
+class UserUpdate(UserBase):
     username: str | None = None
     password: str | None = None
     email: EmailStr | None = None
 
-    model_config = ConfigDict(from_attributes=True)
+
+class UserPatch(UserBase):
+    username: str | None = None
+    password: str | None = None
+    email: EmailStr | None = None
+    is_active: bool | None = None
+    is_verified: bool | None = None
+    is_superuser: bool | None = None
 
 
 class AccessTokenPayload(BaseModel):
@@ -53,5 +62,6 @@ class Token(BaseModel):
     access_token: str
     refresh_token: str
     token_type: str
+    expires_in: int
 
     model_config = ConfigDict(from_attributes=True)
