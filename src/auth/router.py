@@ -76,5 +76,5 @@ async def patch_user(user_id: UUID, new_values: UserPatch) -> Any:
 async def delete_user(user_id: UUID) -> JSONResponse:
     await user_service.delete_user(user_id)
     return {
-        'message': 'user deleted'
+        'message': f'user {user_id} deleted'
     }

@@ -95,6 +95,18 @@ class AuthUtilities:
         to_encode = refresh_token_payload.model_dump()
         refresh_token = cls.encode_token(to_encode)
         return refresh_token
-
+    
+    @staticmethod
+    def check_password_strength(password: str) -> bool:
+        if len(password) < 8 and len(password) > 22:
+            return False
+        if not any(char.isdigit() for char in password):
+            return False
+        if not any(char.isupper() for char in password):
+            return False
+        if not any(char.islower() for char in password):
+            return False
+        return True
+        
 
 auth_utils = AuthUtilities()

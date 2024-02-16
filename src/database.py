@@ -6,7 +6,7 @@ from .config import settings
 
 
 if settings.MODE1 == 'DEV':
-    SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL,
+    SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
     DATABASE_PARAMS = {}
 elif settings.MODE1 == 'TEST':
     SQLALCHEMY_DATABASE_URL = settings.TEST_DATABASE_URL

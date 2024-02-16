@@ -45,7 +45,8 @@ class AuthService:
         return Token(
                 access_token=new_access_token,
                 refresh_token=new_refresh_token,
-                token_type='Bearer'
+                token_type='Bearer',
+                expires_in=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60
             )
     
     async def logout(self, user: UserSchema) -> None:
@@ -89,6 +90,11 @@ class UserService:
     
     
     async def register_new_user(self, user_data: UserCreate) -> User | NoReturn:
+        if not auth_utils.check_password_strength(user_data.password):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail='Password is too weak'
+            )
         user_dict = user_data.model_dump(exclude_unset=True)
         user_dict.update(
             {'password': auth_utils.hash_password(user_data.password)}
@@ -113,6 +119,11 @@ class UserService:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail='Wrong password'
+            )
+        if not auth_utils.check_password_strength(new_password):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail='Password is too weak'
             )
         new_data = UserUpdate(
             password=auth_utils.hash_password(new_password)
