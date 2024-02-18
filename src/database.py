@@ -5,14 +5,14 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from .config import settings
 
 
-if settings.MODE1 == 'DEV':
+if settings.MODE == 'DEV':
     SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
     DATABASE_PARAMS = {}
-elif settings.MODE1 == 'TEST':
+elif settings.MODE == 'TEST':
     SQLALCHEMY_DATABASE_URL = settings.TEST_DATABASE_URL
     DATABASE_PARAMS = {'poolclass': NullPool}
 else:
-    raise ValueError(f"Unknown mode: {settings.MODE1}")
+    raise ValueError(f"Unknown mode: {settings.MODE}")
 
 
 engine = create_async_engine(SQLALCHEMY_DATABASE_URL, echo=True, **DATABASE_PARAMS)

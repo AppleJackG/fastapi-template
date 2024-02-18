@@ -36,13 +36,11 @@ async def test_user_login_wrong_username(ac: AsyncClient, user: User):
     assert response.json()['detail'] == 'Invalid username or password'
 
 
-# async def test_user_login_inactive_user(ac: AsyncClient, inactive_user: User):
-#     login_data = {
-#         "username": user.username,
-#         "password": "qwertyASD1"
-#     }
-#     user.is_active = False
-#     await user.save()
-#     response = await ac.post('/auth/login', data=login_data)
-#     assert response.status_code != 200
-#     assert response.json()['detail'] == 'Inactive user'
+async def test_user_login_inactive_user(ac: AsyncClient, inactive_user: User):
+    login_data = {
+        "username": inactive_user.username,
+        "password": "qwertyASD1"
+    }
+    response = await ac.post('/auth/login', data=login_data)
+    assert response.status_code != 200
+    assert response.json()['detail'] == 'Inactive user'

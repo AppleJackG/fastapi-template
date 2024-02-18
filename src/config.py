@@ -4,7 +4,7 @@ from typing import Literal
 
 
 class Settings(BaseSettings):
-    MODE1: Literal["DEV", "TEST", "PROD"]  
+    MODE: Literal["DEV", "TEST", "PROD"]  
     LOG_LEVEL: str
 
     POSTGRES_DB: str 

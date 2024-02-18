@@ -123,6 +123,14 @@ class UserRepository:
             await session.execute(stmt)
             await session.commit()
         return None
+    
+    @staticmethod
+    async def get_users_list(offset: int = 0, limit: int = 100) -> list[User]:
+        query = select(User).limit(limit).offset(offset)
+        async with session_factory() as session:
+            result = await session.execute(query)
+        users = result.scalars()
+        return users
 
 
 auth_repository = AuthRepository()

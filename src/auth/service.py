@@ -125,14 +125,13 @@ class UserService:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail='Password is too weak'
             )
-        new_data = UserUpdate(
-            password=auth_utils.hash_password(new_password)
-        )
-        new_data_dict = new_data.model_dump(exclude_unset=True)
+        new_data_dict = {
+            'password':auth_utils.hash_password(new_password)
+        }
         user = await self.repo.update_user(user.user_id, new_data_dict)
         return user
     
-    async def patch_user(self, user_id: UUID, new_values: UserPatch) -> User:
+    async def patch_user(self, user_id: UUID, new_values: UserPatch | UserUpdate) -> User:
         new_data_dict = new_values.model_dump(exclude_unset=True)
         user = await self.repo.update_user(user_id, new_data_dict)
         return user
@@ -140,6 +139,19 @@ class UserService:
     async def delete_user(self, user_id: UUID) -> None:
         await self.repo.delete_user(user_id)
         return None
+    
+    async def get_users_list(self, offset: int = 0, limit: int = 100) -> list[User]:
+        users = await self.repo.get_users_list(offset, limit)
+        return users
+    
+    async def get_user_by_id(self, user_id: UUID) -> User:
+        user = await self.repo.get_user_by_id(user_id)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail='User not found'
+            )
+        return user
 
 
 auth_service = AuthService(auth_repository, user_repository)

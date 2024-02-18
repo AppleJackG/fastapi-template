@@ -49,3 +49,10 @@ async def superprotected():
     return {
         'f': 'super'
     }
+
+
+@app.get('/mode')
+async def check_current_mode():
+    return {
+        'mode': settings.MODE
+    }

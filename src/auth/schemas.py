@@ -24,7 +24,6 @@ class UserCreate(UserBase):
 
 class UserUpdate(UserBase):
     username: str | None = None
-    password: str | None = None
     email: EmailStr | None = None
 
 
