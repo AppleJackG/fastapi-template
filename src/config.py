@@ -1,6 +1,9 @@
 import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Literal
+from dotenv import load_dotenv
+
+load_dotenv(override=True)
 
 
 class Settings(BaseSettings):

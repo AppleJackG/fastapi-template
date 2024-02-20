@@ -54,5 +54,6 @@ async def superprotected():
 @app.get('/mode')
 async def check_current_mode():
     return {
-        'mode': settings.MODE
+        'mode': settings.MODE,
+        'database_url': settings.DATABASE_URL
     }

@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:16
+    container_name: db
+    # command: -p 1221
+    # expose:
+    #   - 1221
+    env_file:
+      - .env
+
+  app:
+    build: 
+      context: .
+    env_file:
+      - .env
+    container_name: fastapi_auth_template
+    command: ["/fastapi_auth/docker/app.sh"]
+    ports:
+      - 9988:8000
+    depends_on:
+      - db
