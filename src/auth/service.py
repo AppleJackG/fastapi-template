@@ -126,7 +126,7 @@ class UserService:
                 detail='Password is too weak'
             )
         new_data_dict = {
-            'password':auth_utils.hash_password(new_password)
+            'password': auth_utils.hash_password(new_password)
         }
         user = await self.repo.update_user(user.user_id, new_data_dict)
         return user

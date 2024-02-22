@@ -24,7 +24,7 @@ class AuthUtilities:
     @staticmethod
     def encode_token(
         payload: dict,
-        private_key: str = settings.SECRET_KEY8,
+        private_key: str = settings.SECRET_KEY,
         algorithm: str = settings.ALGORITHM
     ) -> str:
         encoded = jwt.encode(payload, private_key, algorithm=algorithm)
@@ -33,7 +33,7 @@ class AuthUtilities:
     @staticmethod
     def decode_token(
         token: str,
-        public_key: str = settings.PUBLIC_KEY8,
+        public_key: str = settings.PUBLIC_KEY,
         algorithm: str = settings.ALGORITHM
     ) -> dict:
         try:

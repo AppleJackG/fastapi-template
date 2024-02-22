@@ -20,18 +20,18 @@ class Settings(BaseSettings):
     def DATABASE_URL(self): 
         return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
 
-    TEST_POSTGRES_DB1: str
-    TEST_POSTGRES_USER1: str
-    TEST_POSTGRES_PASSWORD1: str
-    TEST_POSTGRES_HOST1: str
-    TEST_POSTGRES_PORT1: str
+    TEST_POSTGRES_DB: str
+    TEST_POSTGRES_USER: str
+    TEST_POSTGRES_PASSWORD: str
+    TEST_POSTGRES_HOST: str
+    TEST_POSTGRES_PORT: str
 
     @property
     def TEST_DATABASE_URL(self):
-        return f"postgresql+asyncpg://{self.TEST_POSTGRES_USER1}:{self.TEST_POSTGRES_PASSWORD1}@{self.TEST_POSTGRES_HOST1}:{self.TEST_POSTGRES_PORT1}/{self.TEST_POSTGRES_DB1}"
+        return f"postgresql+asyncpg://{self.TEST_POSTGRES_USER}:{self.TEST_POSTGRES_PASSWORD}@{self.TEST_POSTGRES_HOST}:{self.TEST_POSTGRES_PORT}/{self.TEST_POSTGRES_DB}"
 
-    SECRET_KEY8: str
-    PUBLIC_KEY8: str
+    SECRET_KEY: str
+    PUBLIC_KEY: str
     ALGORITHM: str
 
     ADMIN_SECRET_KEY: str
