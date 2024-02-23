@@ -10,11 +10,12 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
-        
+
       - name: Create env file
         run: |
           echo MODE=${{ vars.MODE }} > .env
@@ -33,9 +34,9 @@ jobs:
           echo PUBLIC_KEY=${{ secrets.PUBLIC_KEY }} >> .env
           echo ADMIN_SECRET_KEY=${{ secrets.ADMIN_SECRET_KEY }} >> .env
           echo ALGORITHM=${{ secrets.ALGORITHM }} >> .env
-          echo CORS_HEADERS=${{ fromJSON(vars.CORS_HEADERS) }} >> .env
-          echo CORS_ORIGINS=${{ fromJSON(vars.CORS_ORIGINS) }} >> .env
-          echo CORS_METHODS=${{ fromJSON(vars.CORS_METHODS) }} >> .env
+          echo CORS_HEADERS=${{ vars.CORS_HEADERS }} >> .env
+          echo CORS_ORIGINS=${{ vars.CORS_ORIGINS }} >> .env
+          echo CORS_METHODS=${{ vars.CORS_METHODS }} >> .env
           echo JUPYTER_PLATFORM_DIRS=${{ vars.JUPYTER_PLATFORM_DIRS }} >> .env
 
       - name: Start container
