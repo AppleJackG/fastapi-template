@@ -8,7 +8,39 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
 
+env:
+  MODE: ${{ vars.MODE }}
+  LOG_LEVEL: ${{ vars.LOG_LEVEL }}
+
+  POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+  POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+  POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+  POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+  POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+
+  TEST_POSTGRES_DB: ${{ secrets.TEST_POSTGRES_DB }}
+  TEST_POSTGRES_USER: ${{ secrets.TEST_POSTGRES_USER }}
+  TEST_POSTGRES_PASSWORD: ${{ secrets.TEST_POSTGRES_PASSWORD }}
+  TEST_POSTGRES_HOST: ${{ secrets.TEST_POSTGRES_HOST }}
+  TEST_POSTGRES_PORT: ${{ secrets.TEST_POSTGRES_PORT }}
+
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+
+  PUBLIC_KEY: ${{ secrets.PUBLIC_KEY }}
+
+  ADMIN_SECRET_KEY: ${{ secrets.ADMIN_SECRET_KEY }}
+
+  ALGORITHM: ${{ secrets.ALGORITHM }}
+
+  CORS_HEADERS: ${{ vars.CORS_HEADERS }}
+  CORS_ORIGINS: ${{ vars.CORS_ORIGINS }}
+  CORS_METHODS: ${{ vars.CORS_METHODS }}
+
+  JUPYTER_PLATFORM_DIRS: ${{ vars.JUPYTER_PLATFORM_DIRS }}
+
+  
 permissions:
   contents: read
 
