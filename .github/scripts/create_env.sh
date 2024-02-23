@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo MODE=${{ vars.MODE }} >> .env
+echo MODE=${{ vars.MODE }} > .env
 echo LOG_LEVEL=${{ vars.LOG_LEVEL }} >> .env
 echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env
 echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
