@@ -30,8 +30,8 @@ jobs:
           echo TEST_POSTGRES_PASSWORD=${{ secrets.TEST_POSTGRES_PASSWORD }} >> .env
           echo TEST_POSTGRES_HOST=${{ secrets.TEST_POSTGRES_HOST }} >> .env
           echo TEST_POSTGRES_PORT=${{ secrets.TEST_POSTGRES_PORT }} >> .env
-          echo SECRET_KEY=${{ secrets.SECRET_KEY }}>>.env
-          echo PUBLIC_KEY=${{ secrets.PUBLIC_KEY }}>>.env
+          echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
+          echo PUBLIC_KEY=${{ secrets.PUBLIC_KEY }} >> .env
           echo ADMIN_SECRET_KEY=${{ secrets.ADMIN_SECRET_KEY }} >> .env
           echo ALGORITHM=${{ secrets.ALGORITHM }} >> .env
           echo CORS_HEADERS=${{ vars.CORS_HEADERS }} >> .env
@@ -39,11 +39,14 @@ jobs:
           echo CORS_METHODS=${{ vars.CORS_METHODS }} >> .env
           echo JUPYTER_PLATFORM_DIRS=${{ vars.JUPYTER_PLATFORM_DIRS }} >> .env
 
-      - name: Read env
-        run: cat .env
+      # - name: Read env
+      #   run: cat .env
       
       - name: Start container
-        run: docker-compose -f "docker-compose.test.yml" up --build
+        run: docker-compose -f "docker-compose.test.yml" up -d --build
+      
+      - name: Run tests
+        run: pytest -v
       
       - name: Stop containers
         if: always()
