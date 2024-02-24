@@ -38,15 +38,12 @@ jobs:
           echo CORS_ORIGINS=${{ vars.CORS_ORIGINS }} >> .env
           echo CORS_METHODS=${{ vars.CORS_METHODS }} >> .env
           echo JUPYTER_PLATFORM_DIRS=${{ vars.JUPYTER_PLATFORM_DIRS }} >> .env
-
-      # - name: Read env
-      #   run: cat .env
       
       - name: Start container
-        run: docker-compose -f "docker-compose.test.yml" up -d --build
+        run: docker-compose -f docker-compose.test.yml up -d --build
       
       - name: Run tests
-        run: pytest -v
+        run: docker compose -f docker-compose.test.yml exec app pytest
       
       - name: Stop containers
         if: always()

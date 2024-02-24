@@ -20,10 +20,11 @@ services:
   app:
     build: 
       context: .
+    stdin_open: true 
+    tty: true
     env_file:
       - .env
     container_name: fastapi_auth_template
-    # command: ["pytest", "-v"]
     depends_on:
       db:
         condition: service_healthy
