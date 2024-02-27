@@ -2,11 +2,13 @@ from typing import Annotated, Any
 from uuid import UUID
 from fastapi import APIRouter, Depends, Form, Header, Response
 from fastapi.responses import JSONResponse
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from .models import User
 from .schemas import Token, UserPatch, UserSchema, UserCreate, UserUpdate
 from .service import user_service, auth_service
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from ..tasks import tasks
+
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/auth/login')
@@ -41,6 +43,7 @@ async def logout(user: UserSchema = Depends(user_service.get_current_user)) -> J
 @user_router.post('/signup', response_model=UserSchema, status_code=201)
 async def signup(user_data: UserCreate) -> Any:
     user = await user_service.register_new_user(user_data)
+    tasks.send_registration_confirmation_email.delay(user.username, user.email)
     return user
 
 
