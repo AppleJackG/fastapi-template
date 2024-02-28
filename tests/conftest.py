@@ -61,9 +61,33 @@ async def inactive_user() -> AsyncGenerator[User, None]:
 
 
 @pytest_asyncio.fixture(scope="function")
+async def super_user() -> AsyncGenerator[User, None]:
+    user = User()
+    user.email = 'superuser1@example.com'
+    user.username = 'test_superuser'
+    user.password = auth_utils.hash_password('qwertyASD1')
+    user.is_superuser = True
+    async with session_factory() as session:
+        session.add(user)
+        await session.commit()
+        await session.refresh(user)
+    yield user
+    async with session_factory() as session:
+        await session.delete(user)
+        await session.commit()
+
+
+@pytest_asyncio.fixture(scope="function")
 async def access_token(user: User) -> str:
     access_key = uuid4()
     access_token = auth_utils.create_access_token(user, access_key)
+    return access_token
+
+
+@pytest_asyncio.fixture(scope="function")
+async def super_access_token(super_user: User) -> str:
+    access_key = uuid4()
+    access_token = auth_utils.create_access_token(super_user, access_key)
     return access_token
 
 

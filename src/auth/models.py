@@ -4,6 +4,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, DateTime
 from uuid import UUID, uuid4
 from sqladmin import ModelView
+from ..config import settings
 
 
 class User(Base):
@@ -18,6 +19,11 @@ class User(Base):
     is_superuser: Mapped[bool] = mapped_column(default=False)
 
     refresh_token: Mapped[list['RefreshToken']] = relationship(back_populates='user', cascade="all, delete")
+
+    if settings.MODE == 'TEST':
+        __mapper_args__ = {
+            'confirm_deleted_rows': False
+        }
 
 
 class RefreshToken(Base):

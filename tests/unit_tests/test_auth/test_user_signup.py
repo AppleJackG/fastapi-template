@@ -3,7 +3,7 @@ from httpx import AsyncClient
 from src.auth.models import User
 
 
-async def test_user_signup(ac: AsyncClient):
+async def test_user_signup(ac: AsyncClient, super_access_token: str):
     new_user = {
         "username": "test_user1",
         "password": "qwertyASD1",
@@ -18,6 +18,7 @@ async def test_user_signup(ac: AsyncClient):
     assert response.json()['is_active'] == True
     assert 'user_id' in response.json()
     assert not ('password' in response.json())
+    await ac.delete(f'/superuser/delete_user/{response.json()["user_id"]}', headers={"Authorization": f"Bearer {super_access_token}"})
 
 
 async def test_user_signup_weak_password(ac: AsyncClient):

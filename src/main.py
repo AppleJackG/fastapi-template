@@ -1,12 +1,15 @@
 from fastapi import Depends, FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
+from sqladmin import Admin
+
 from .auth.models import UserAdmin, RefreshTokenAdmin
 from .config import settings
-from .auth.router import auth_router, user_router, superuser_router
+from .auth.auth_router import auth_router
+from .auth.user_router import user_router
+from .auth.superuser_router import superuser_router
 from .auth.service import user_service
 from .auth.admin import authentication_backend
-from sqladmin import Admin
 from .database import engine
 
 
@@ -48,12 +51,4 @@ async def protected():
 async def superprotected():
     return {
         'f': 'super'
-    }
-
-
-@app.get('/mode')
-async def check_current_mode():
-    return {
-        'mode': settings.MODE,
-        'database_url': settings.DATABASE_URL
     }
