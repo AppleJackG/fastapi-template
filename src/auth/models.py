@@ -20,6 +20,9 @@ class User(Base):
 
     refresh_token: Mapped[list['RefreshToken']] = relationship(back_populates='user', cascade="all, delete")
 
+    def get_context_string(self, context: str):
+        return f'{context}{str(self.user_id)[-5:]}{self.username[-4:]}{self.email[:6]}{self.user_id[:5]}'.strip()
+
     if settings.MODE == 'TEST':
         __mapper_args__ = {
             'confirm_deleted_rows': False

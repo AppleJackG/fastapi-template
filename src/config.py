@@ -43,6 +43,8 @@ class Settings(BaseSettings):
     CORS_HEADERS: list[str]
     CORS_METHODS: list[str]
 
+    FRONTEND_HOST: str
+
     SMTP_USER: str
     SMTP_PASSWORD: str
     SMTP_HOST: str

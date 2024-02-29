@@ -3,7 +3,11 @@ from email.message import EmailMessage
 from ..config import settings
 
 
-def get_email_registration_confirmation_template(username: str, recipient_email: str) -> EmailMessage:
+def get_email_registration_confirmation_template(
+        username: str, 
+        recipient_email: str,
+        verification_link: str
+    ) -> EmailMessage:
     message = EmailMessage()
     message['Subject'] = 'Добро пожаловать на наш сайт!'
     message['From'] = settings.SMTP_USER
@@ -11,7 +15,7 @@ def get_email_registration_confirmation_template(username: str, recipient_email:
     message.set_content(
         '<div>'
         f'<h1 style="color: red;">Здравствуйте, {username}, для подтверждения регистрации'
-        ' перейдите по ссылке 😊</h1>'
+        f' перейдите по ссылке: <a href="{verification_link}">{verification_link}</a></h1>'
         '<p>Спасибо за регистрацию на нашем сайте!</p>'
         f'<p>Отправлено {datetime.now():%d.%m в %H:%M}</p>'
         '</div>',

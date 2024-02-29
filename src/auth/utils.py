@@ -2,7 +2,7 @@ from typing import NoReturn
 from uuid import UUID, uuid4
 import jwt
 from jwt.exceptions import ExpiredSignatureError
-
+from passlib.context import CryptContext
 from .exceptions import ExpiredToken, InactiveUser, InvalidCredentials, InvalidToken
 from .schemas import AccessTokenPayload, RefreshTokenPayload
 from .models import User
@@ -17,6 +17,7 @@ from loguru import logger
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/auth/login')
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 class AuthUtilities:
@@ -57,6 +58,14 @@ class AuthUtilities:
             hashed_password=hashed_password
         )
     
+    @staticmethod
+    def hash_as_string(password: str) -> str:
+        return pwd_context.hash(password)
+    
+    @staticmethod
+    def verify_strings(plain_password: str, hashed_password: str):
+        return pwd_context.verify(plain_password, hashed_password)
+
     @staticmethod
     def check_credentials(user: User | None, password: str) -> bool | NoReturn:
         if not user:

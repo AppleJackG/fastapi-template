@@ -64,3 +64,10 @@ class Token(BaseModel):
     expires_in: int
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class VerifyUserEmailSchema(BaseModel):
+    token: str
+    email: EmailStr
+
+    model_config = ConfigDict(from_attributes=True)
