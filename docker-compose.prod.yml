@@ -25,7 +25,7 @@ services:
     container_name: fastapi_auth_template
     command: ["/fastapi_auth/docker/app.sh"]
     ports:
-      - 9988:8000
+      - 80:8000
     depends_on:
       db:
         condition: service_healthy
