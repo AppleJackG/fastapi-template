@@ -8,7 +8,6 @@ from .config import settings
 from .auth.auth_router import auth_router
 from .auth.user_router import user_router
 from .auth.superuser_router import superuser_router
-from .auth.service import user_service
 from .auth.admin import authentication_backend
 from .database import engine
 
@@ -34,21 +33,9 @@ app.add_middleware(
 
 @app.get("/", response_class=HTMLResponse)
 async def home():
-    return """
-    <a href="http://127.0.0.1:8000/docs">Documentation</a><br>
-    <a href="http://127.0.0.1:8000/redoc">ReDoc</a>
-    """
-
-
-@app.get('/protected', dependencies=[Depends(user_service.get_current_user)])
-async def protected():
-    return {
-        'f': 'F'
-    }
-
-
-@app.get('/superprotected', dependencies=[Depends(user_service.get_current_superuser)])
-async def superprotected():
-    return {
-        'f': 'super'
-    }
+    port = 9988 if settings.MODE == 'PROD' else 8000
+    main_page = (
+        f'<a href="http://127.0.0.1:{port}/docs">Documentation</a><br>'
+        f'<a href="http://127.0.0.1:{port}/redoc">ReDoc</a>'
+    )
+    return main_page

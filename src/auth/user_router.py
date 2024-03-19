@@ -5,7 +5,6 @@ from fastapi.responses import JSONResponse
 from .models import User
 from .schemas import UserSchema, UserCreate, UserUpdate, VerifyUserEmailSchema
 from .service import user_service
-from ..tasks import tasks
 
 
 user_router = APIRouter(prefix='/users', tags=['Users'])
@@ -13,8 +12,7 @@ user_router = APIRouter(prefix='/users', tags=['Users'])
 
 @user_router.post('/signup', response_model=UserSchema, status_code=201)
 async def signup(user_data: UserCreate) -> Any:
-    user, verification_link = await user_service.register_new_user(user_data)
-    tasks.send_registration_confirmation_email.delay(user.username, user.email, verification_link)
+    user = await user_service.register_new_user(user_data)
     return user
 
 

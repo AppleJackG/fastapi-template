@@ -1,6 +1,6 @@
 from fastapi import Request
 from sqladmin.authentication import AuthenticationBackend
-from .service import user_service
+from .service import user_service, auth_service
 from ..config import settings
 
 
@@ -9,7 +9,8 @@ class AdminAuth(AuthenticationBackend):
         form = await request.form()
         username, password = form["username"], form["password"]
         await user_service.check_admin_rights(username, password)
-        request.session.update({"token": "..."})
+        tokens = await auth_service.login(username, password)
+        request.session.update({"token": tokens.access_token})
         return True
 
     async def logout(self, request: Request) -> bool:

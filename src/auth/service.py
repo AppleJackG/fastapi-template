@@ -88,8 +88,7 @@ class UserService:
             return True
         return False
     
-    
-    async def register_new_user(self, user_data: UserCreate) -> tuple[User, str] | NoReturn:
+    async def register_new_user(self, user_data: UserCreate) -> User | NoReturn:
         if not auth_utils.check_password_strength(user_data.password):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -107,23 +106,7 @@ class UserService:
             if user_exists:
                 raise EmailIsTaken
         new_user = await self.repo.create_new_user(user_dict)
-        vetification_token = auth_utils.hash_as_string(new_user.get_context_string("verify"))
-        verification_link = f'{settings.FRONTEND_HOST}/auth/account_verify?token={vetification_token}&email={new_user.email}'
-        return (new_user, verification_link)
-    
-    async def verify_user_email(self, data: VerifyUserEmailSchema) -> None:
-        user = await self.repo.get_user_by_email(data.email)
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail='Wrong verification link'
-            )
-        if not auth_utils.verify_strings(user.get_context_string("verify"), data.token):
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail='Wrong verification link'
-            )
-        await self.repo.update_user(user.user_id, {'is_verified': True})
+        return new_user
     
     async def change_password(
         self,

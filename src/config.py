@@ -43,15 +43,6 @@ class Settings(BaseSettings):
     CORS_HEADERS: list[str]
     CORS_METHODS: list[str]
 
-    FRONTEND_HOST: str
-
-    SMTP_USER: str
-    SMTP_PASSWORD: str
-    SMTP_HOST: str
-    SMTP_PORT: str
-
-    CELERY_BROKER_URL: str
-
     model_config = SettingsConfigDict(env_file=".env", extra="allow")
 
 
