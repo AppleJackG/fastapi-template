@@ -15,4 +15,5 @@ jobs:
             host: ${{ secrets.VPS_IP }} 
             user: ${{ secrets.VPS_USER }}
             private_key: ${{ secrets.VPS_PRIVATE_KEY }} 
+            host_fingerprint: ${{ secrets.HOST_FINGERPRINT }}
             command: echo 'hello world!!!!!!AAAAAAAAAA' 
