@@ -43,3 +43,10 @@ async def home():
             f'<a href="http://127.0.0.1:8000/redoc">ReDoc</a>'
         )
     return main_page
+
+
+# git pull 
+# docker compose -f docker-compose.prod.yml down
+# docker compose -f docker-compose.prod.yml pull
+# docker compose -f docker-compose.prod.yml up -d --force-recreate --build
+# docker image prune -f
