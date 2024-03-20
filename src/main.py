@@ -35,7 +35,7 @@ app.add_middleware(
 async def home():
     if settings.MODE == 'PROD':
         main_page = (
-            '<p>Welcome to FastAPI template. v.0.0.1</p>'
+            '<p>Welcome to FastAPI template. v.0.0.2</p>'
         )
     else:
         main_page = (
