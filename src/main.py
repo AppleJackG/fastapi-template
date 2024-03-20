@@ -35,7 +35,7 @@ app.add_middleware(
 async def home():
     if settings.MODE == 'PROD':
         main_page = (
-            '<p>Welcome to FastAPI template. v.0.0.3</p>'
+            '<p>Welcome to FastAPI template. v.0.1.0</p>'
         )
     else:
         main_page = (
@@ -43,9 +43,3 @@ async def home():
             f'<a href="http://127.0.0.1:8000/redoc">ReDoc</a>'
         )
     return main_page
-
-
-# git pull 
-# docker compose -f docker-compose.prod.yml pull
-# docker compose -f docker-compose.prod.yml up -d --force-recreate --build
-# docker image prune -f
