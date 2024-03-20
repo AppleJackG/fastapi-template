@@ -33,9 +33,12 @@ app.add_middleware(
 
 @app.get("/", response_class=HTMLResponse)
 async def home():
-    port = 9988 if settings.MODE == 'PROD' else 8000
+    if settings.MODE == 'PROD':
+        main_page = (
+            '<p>Welcome to FastAPI template. v.0.0.1</p>'
+        )
     main_page = (
-        f'<a href="http://127.0.0.1:{port}/docs">Documentation</a><br>'
-        f'<a href="http://127.0.0.1:{port}/redoc">ReDoc</a>'
+        f'<a href="http://127.0.0.1:8000/docs">Documentation</a><br>'
+        f'<a href="http://127.0.0.1:8000/redoc">ReDoc</a>'
     )
     return main_page
