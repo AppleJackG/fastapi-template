@@ -9,11 +9,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Run command on remote server
-        uses: D3rHase/ssh-command-action@v0.2.2
+      - name: executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@v1.0.3
         with:
-            host: ${{ secrets.VPS_IP }} 
-            user: ${{ secrets.VPS_USER }}
-            private_key: ${{ secrets.VPS_PRIVATE_KEY }} 
-            host_fingerprint: ${{ secrets.HOST_FINGERPRINT }}
-            command: echo 'hello world!!!!!!AAAAAAAAAA' 
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_PRIVATE_KEY }}
+          script: |
+            whoami
+            ls -a
