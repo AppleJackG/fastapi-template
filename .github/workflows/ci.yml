@@ -16,5 +16,8 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_PRIVATE_KEY }}
           script: |
-            whoami
-            ls -a
+            cd fastapi-template
+            git pull 
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d --force-recreate --build
+            docker image prune -f
